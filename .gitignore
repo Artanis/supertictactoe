@@ -1,0 +1,4 @@
+*.code-workspace
+.cache/*
+dist/*
+node_modules
