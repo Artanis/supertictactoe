@@ -113,9 +113,26 @@ describe("`Gamestate` object", () => {
 
     });
     
-    test.todo("detects game wins");
+    test.only("players can win subgames", () => {
+      gamestate.move(new Turn(x, 0, 0));
+      gamestate.move(new Turn(o, 0, 3));
+      gamestate.move(new Turn(x, 3, 0));
+      gamestate.move(new Turn(o, 0, 4));
+      gamestate.move(new Turn(x, 4, 0));
+
+      var turn = new Turn(o, 0, 5);
+      gamestate.move(turn);
+
+      expect(turn.subgameWinning).toEqual([3, 4, 5]);
+    });
+
+    test.todo("players can't win a subgame twice");
   
-    test.todo("players can't win subgames that are already won");
+    test.todo("players can't win a subgame that the other player has already won");
+
+    test.todo("players can win the game");
+
+    test.todo("the game ends when a player wins");
   
     test.todo("players can't play if the game is over");
   });

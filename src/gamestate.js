@@ -3,7 +3,8 @@
 import {
   last as _last,
   range as _range,
-  filter as _filter} from "lodash";
+  filter as _filter,
+  includes as _includes} from "lodash";
 import uuidv4 from "uuid/v4";
 
 /**
@@ -11,6 +12,8 @@ import uuidv4 from "uuid/v4";
  * 
  */
 export class Gamestate {
+  static WINTESTS = "012;345;678;036;147;258;048;246".split(";");
+
   /**
    * @type {String} UUIDv4 string
    */
@@ -86,18 +89,24 @@ export class Gamestate {
   move(turn) {
     var player = this.activePlayer;
     var subgame = this.activeSubgame;
+    var subgamewins;
 
     if(player !== turn.player) {
-      throw new Error(`Incorrect Player: Expected player ${player.label}, got ${turn.player.label}`)
+      throw new Error(`Incorrect Player: Expected player ${player.label}, got ${turn.player.label}`);
     }
 
     if(subgame.indexOf(turn.square) < 0) {
-      throw new Error(`Incorrect Subgame: Expected play in subgame ${subgame}, got play in ${turn.square}`);
+      throw new Error(`Incorrect Subgame: Expected play in one of subgame ${subgame}, got play in ${turn.square}`);
     }
     
     var played = this.query(turn.square, turn.subsquare);
     if(played.length > 0) {
-      throw new Error(`Previously Played: The move (${turn.square}, ${turn.subsquare}) is already taken.`)
+      throw new Error(`Previously Played: The move (${turn.square}, ${turn.subsquare}) is already taken.`);
+    }
+
+    subgamewins = this.isSubgameWinning(turn);
+    if(subgamewins) {
+      turn.subgameWinning = subgamewins;
     }
 
     this.history.push(turn);
@@ -116,11 +125,37 @@ export class Gamestate {
   query(square, subsquare) {
     return _filter(this.history, (o) => {
       if(subsquare !== undefined) {
-        return o.square === square && o.subsquare === subsquare
+        return o.square === square && o.subsquare === subsquare;
       } else {
-        return o.square === square
+        return o.square === square;
       }
     });
+  }
+
+  /**
+   * 
+   * @param {Turn} turn
+   * @return {Number[3]|Bool}
+   */
+  isSubgameWinning(turn) {
+    var subgame = this.query(turn.square);
+    subgame.push(turn);
+
+    var plays = {};
+
+    for(var i = 0; i < subgame.length; i++) {
+      let turn = subgame[i];
+      if(plays[turn.player.label] === undefined) {
+        plays[turn.player.label] = "";
+      }
+      plays[turn.player.label] += turn.subsquare.toString();
+
+      if(_includes(Gamestate.WINTESTS, plays[turn.player.label])) {
+        return plays[turn.player.label].split("").map((n) => Number(n));
+      }
+    }
+
+    return false
   }
 }
 
