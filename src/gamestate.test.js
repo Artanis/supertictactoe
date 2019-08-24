@@ -66,10 +66,14 @@ describe("`Gamestate` object", () => {
         gamestate.move(new Turn(x, 0, 1));
       }).toThrow(/incorrect player/i);
     });
-  
-    test.todo("knows active subgame");
-    
-    test.todo("players can't play in non-active subgames");
+      
+    test("players can't play in non-active subgames", () => {
+      gamestate.move(new Turn(x, 0, 0));
+
+      expect(() => {
+        gamestate.move(new Turn(o, 1, 0));
+      }).toThrow(/incorrect subgame/i);
+    });
   
     test.todo("players can play in non-active subgames if the active subgame is full");
   
