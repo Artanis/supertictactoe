@@ -126,10 +126,21 @@ describe("`Gamestate` object", () => {
       expect(turn.subgameWinning).toEqual([3, 4, 5]);
     });
 
-    test.todo("players can't win a subgame twice");
-  
-    test.todo("players can't win a subgame that the other player has already won");
+    test("subgames can't be won twice", () => {
+      gamestate.move(new Turn(x, 0, 0));
+      gamestate.move(new Turn(o, 0, 3));
+      gamestate.move(new Turn(x, 3, 0));
+      gamestate.move(new Turn(o, 0, 4));
+      gamestate.move(new Turn(x, 4, 0));
+      gamestate.move(new Turn(o, 0, 5));
+      gamestate.move(new Turn(x, 5, 0));
 
+      var turn = new Turn(o, 0, 6);
+      gamestate.move(turn);
+
+      expect(turn.subgameWinning).toBeUndefined();
+    });
+  
     test.todo("players can win the game");
 
     test.todo("the game ends when a player wins");

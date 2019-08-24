@@ -2,6 +2,7 @@
 
 import {
   last as _last,
+  find as _find,
   range as _range,
   filter as _filter,
   includes as _includes} from "lodash";
@@ -89,6 +90,7 @@ export class Gamestate {
   move(turn) {
     var player = this.activePlayer;
     var subgame = this.activeSubgame;
+    var subgamewinnable;
     var subgamewins;
 
     if(player !== turn.player) {
@@ -104,9 +106,14 @@ export class Gamestate {
       throw new Error(`Previously Played: The move (${turn.square}, ${turn.subsquare}) is already taken.`);
     }
 
-    subgamewins = this.isSubgameWinning(turn);
-    if(subgamewins) {
-      turn.subgameWinning = subgamewins;
+    subgamewinnable = !_find(this.history, (o) => {
+      return o.square === turn.square && o.subgameWinning !== undefined;
+    });
+    if(subgamewinnable) {
+      subgamewins = this.isSubgameWinning(turn);
+      if(subgamewins) {
+        turn.subgameWinning = subgamewins;
+      }
     }
 
     this.history.push(turn);
@@ -190,5 +197,9 @@ export class Turn {
     this.subsquare = subsquare;
 
     Object.seal(this);
+  }
+
+  toString() {
+    return `<Turn(id="${this.id}", p="${this.player.label}", s=${this.square}, ss=${this.subsquare}, swin=${this.subgameWinning}, gwin=${this.gameWinning})>`;
   }
 }
