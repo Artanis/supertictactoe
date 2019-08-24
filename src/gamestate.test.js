@@ -24,11 +24,16 @@ describe("`Gamestate` object", () => {
       gamestate = new Gamestate();
     });
 
-    test("has string UUID `id` property", () => {
+    test("has an `id` property that is a UUID", () => {
       expect(gamestate.id).toEqual(expect.stringMatching(UUID));
     });
 
-    test("has array `history` property", () => {
+    test("has a `players` property that is an object", () => {
+      expect(gamestate.players).toBeInstanceOf(Object);
+      expect(Object.keys(gamestate.players)).toEqual(["X", "O"]);
+    });
+
+    test("has a `history` property that is an Array", () => {
       expect(gamestate.history).toBeInstanceOf(Array);
     });
   });
@@ -36,23 +41,31 @@ describe("`Gamestate` object", () => {
   test.todo("builds gamestate from history");
 
   describe("game rules", () => {
-    var gamestate;
+    var x, o, gamestate;
+
+    beforeAll(() => {
+      x = Player.X();
+      o = Player.O();
+    });
 
     beforeEach(() => {
-      gamestate = new Gamestate();
+      gamestate = new Gamestate(x, o);
     });
 
     test("players can make moves", () => {
-      var x = Player.X();
-      var o = Player.O();
-
       gamestate.move(new Turn(x, 0, 1));
       gamestate.move(new Turn(o, 1, 2));
 
       expect(gamestate.history).toHaveLength(2);
     });
   
-    test.todo("non-active player can't play");
+    test("non-active player can't play", () => {
+      gamestate.move(new Turn(x, 0, 0));
+
+      expect(() => {
+        gamestate.move(new Turn(x, 0, 1));
+      }).toThrow(/incorrect player/i);
+    });
   
     test.todo("knows active subgame");
     
