@@ -10,6 +10,10 @@ export class Gamestate {
     this.id = uuidv4();
     this.history = new Array();
   }
+
+  move(turn) {
+    this.history.push(turn);
+  }
 }
 
 export class Turn {

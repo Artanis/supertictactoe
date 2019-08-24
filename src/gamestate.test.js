@@ -35,31 +35,45 @@ describe("`Gamestate` object", () => {
 
   test.todo("builds gamestate from history");
 
-  test.todo("finds winners");
+  describe("game rules", () => {
+    var gamestate;
 
-  test.todo("knows active player");
+    beforeEach(() => {
+      gamestate = new Gamestate();
+    });
 
-  test.todo("knows active subgame");
+    test("players can make moves", () => {
+      var x = Player.X();
+      var o = Player.O();
 
-  test.todo("validates moves");
+      gamestate.move(new Turn(x, 0, 1));
+      gamestate.move(new Turn(o, 1, 2));
 
-  test.todo("non-active player can't play");
-
-  test.todo("players can't play in non-active subgames");
-
-  test.todo("players can play in non-active subgames if the active subgame is full");
-
-  test.todo("players can't play in spaces that are already played in");
-
-  test.todo("players can't win subgames that are already won");
-
-  test.todo("players can't play if the game is over");
+      expect(gamestate.history).toHaveLength(2);
+    });
+  
+    test.todo("non-active player can't play");
+  
+    test.todo("knows active subgame");
+    
+    test.todo("players can't play in non-active subgames");
+  
+    test.todo("players can play in non-active subgames if the active subgame is full");
+  
+    test.todo("players can't play in spaces that are already played in");
+    
+    test.todo("detects game wins");
+  
+    test.todo("players can't win subgames that are already won");
+  
+    test.todo("players can't play if the game is over");
+  });
 });
 
 /**
  * Turn
  */
-describe.only("`Turn` object", () => {
+describe("`Turn` object", () => {
   describe("follows spec", () => {
     var turn;
 
