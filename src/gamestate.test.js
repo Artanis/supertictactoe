@@ -12,6 +12,21 @@ import {Player} from "./player";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 /**
+ * Plays a given future onto a `gamestate`, then returns the last `Turn` in
+ * `future`.
+ * @param {Gamestate} gamestate Game to play the future on to
+ * @param {Turn[]} future The future to play
+ * @returns {Turn} The last turn in `future`
+ */
+function fastForward(gamestate, future) {
+  for(var i = 0; i < future.length; i++) {
+    gamestate.move(future[i]);
+  }
+
+  return future.slice(-1).pop();
+}
+
+/**
  * Testing
  */
 import {Gamestate, Turn} from "./gamestate";
@@ -141,7 +156,33 @@ describe("`Gamestate` object", () => {
       expect(turn.subgameWinning).toBeUndefined();
     });
   
-    test.todo("players can win the game");
+    test("players can win the game", () => {
+      var future = [
+        new Turn(x, 0, 0),
+        new Turn(o, 0, 8),
+        new Turn(x, 8, 8),
+        new Turn(o, 8, 0),
+        new Turn(x, 0, 1),
+        new Turn(o, 1, 0),
+        new Turn(x, 0, 2),
+        new Turn(o, 2, 1),
+        new Turn(x, 1, 3),
+        new Turn(o, 3, 1),
+        new Turn(x, 1, 4),
+        new Turn(o, 4, 1),
+        new Turn(x, 1, 5),
+        new Turn(o, 5, 2),
+        new Turn(x, 2, 6),
+        new Turn(o, 6, 2),
+        new Turn(x, 2, 7),
+        new Turn(o, 7, 2),
+        new Turn(x, 2, 8),
+      ];
+
+      var last = fastForward(gamestate, future);
+
+      expect(last.gameWinning).toEqual([0, 1, 2]);
+    });
 
     test.todo("the game ends when a player wins");
   

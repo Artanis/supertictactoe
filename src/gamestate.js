@@ -92,6 +92,7 @@ export class Gamestate {
     var subgame = this.activeSubgame;
     var subgamewinnable;
     var subgamewins;
+    var gamewin;
 
     if(player !== turn.player) {
       throw new Error(`Incorrect Player: Expected player ${player.label}, got ${turn.player.label}`);
@@ -110,39 +111,98 @@ export class Gamestate {
       return o.square === turn.square && o.subgameWinning !== undefined;
     });
     if(subgamewinnable) {
-      subgamewins = this.isSubgameWinning(turn);
+      subgamewins = this.subgameWin(turn);
       if(subgamewins) {
         turn.subgameWinning = subgamewins;
       }
+    }
+
+    gamewin = this.gameWin(turn);
+    if (gamewin) {
+      turn.gameWinning = gamewin;
     }
 
     this.history.push(turn);
   }
 
   /**
+   * Finds the winning play in a subgame.
    * 
-   * @param {Turn} turn
+   * Replays the history of the relevent subgame, with an optional `turn`
+   * appended for look ahead, to determine the winning play.
+   * 
+   * Will always find the first win, regardless of future plays in that subgame.
+   * 
+   * @param {Turn} turn Look ahead
    * @return {Number[3]|Bool}
    */
-  isSubgameWinning(turn) {
+  subgameWin(turn) {
     var subgame = _filter(this.history, {square: turn.square});
-    subgame.push(turn);
+
+    if(turn !== undefined) {
+      subgame.push(turn);
+    }
 
     var plays = {};
 
     for(var i = 0; i < subgame.length; i++) {
       let turn = subgame[i];
-      if(plays[turn.player.label] === undefined) {
-        plays[turn.player.label] = "";
-      }
-      plays[turn.player.label] += turn.subsquare.toString();
+      let player = turn.player.label;
 
-      if(_includes(Gamestate.WINTESTS, plays[turn.player.label])) {
-        return plays[turn.player.label].split("").map((n) => Number(n));
+      if(plays[player] === undefined) {
+        plays[player] = "";
+      }
+
+      plays[player] += turn.subsquare.toString();
+
+      if(_includes(Gamestate.WINTESTS, plays[player])) {
+        return plays[player].split("").map((n) => Number(n));
       }
     }
 
     return false
+  }
+
+  /**
+   * Finds the winning play of the game.
+   * 
+   * Replays the history of subgame wins, with optional `turn` appended for look
+   * ahead, to determine the winning play.
+   * 
+   * Will always find the first win, regardless of any future plays in the game.
+   * 
+   * Similar to `Gamestate.subgameWin()`.
+   * 
+   * @param {Turn} turn Look ahead
+   * @return {Number[3]|Bool}
+   */
+  gameWin(turn) {
+    var game = _filter(this.history, (o) => {
+      return o.subgameWinning !== undefined;
+    });
+
+    if(turn !== undefined) {
+      game.push(turn);
+    }
+
+    var plays = {};
+    for (var i = 0; i < game.length; i++) {
+      let turn = game[i];
+      let player = turn.player.label;
+      
+      if (plays[player] === undefined) {
+        plays[player] = "";
+      }
+
+      plays[player] += turn.square.toString();
+
+      
+      if (_includes(Gamestate.WINTESTS, plays[player])) {
+        return plays[player].split("").map((n) => Number(n));
+      }
+    }
+
+    return false;
   }
 }
 
