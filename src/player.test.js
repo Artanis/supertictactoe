@@ -14,12 +14,27 @@ import {Player, PlayerMark} from "./player";
  * Player
  */
 describe("Player object", () => {
+  describe("follows spec", () => {
+    var player;
+
+    beforeAll(() => {
+      player = new Player();
+    });
+
+    test("has `label` attribute that is a string", () => {
+      expect(player.label).toEqual(expect.any(String));
+    });
+
+    test("has `mark` attribute that is a Path2D", () => {
+      expect(player.mark).toBeInstanceOf(PlayerMark);
+    });
+  });
+  
   test("default constructor for player 1", () => {
     var player = Player.X();
 
     expect(player).toBeInstanceOf(Player);
     expect(player.label).toEqual("X");
-    expect(player.mark).toBeInstanceOf(PlayerMark);
   });
 
   test("default constructor for player 2", () => {
@@ -27,7 +42,6 @@ describe("Player object", () => {
 
     expect(player).toBeInstanceOf(Player);
     expect(player.label).toBe("O");
-    expect(player.mark).toBeInstanceOf(PlayerMark);
   });
 });
 

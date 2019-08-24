@@ -5,8 +5,8 @@ export class Player {
   mark;
 
   constructor(label, mark) {
-    this.label = label;
-    this.mark = mark;
+    this.label = label || ".";
+    this.mark = mark || new PlayerMark();
   }
 
   static X() {
