@@ -1,0 +1,35 @@
+{
+  "name": "supertictactoe",
+  "version": "0.1.0",
+  "description": "A simple web RTC game of Super Tic-Tac-Toe.",
+  "main": "supertictactoe",
+  "dependencies": {
+    "concretejs": "^3.0.5",
+    "lodash-es": "^4.17.15",
+    "round": "^2.0.1",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babel-jest": "^24.9.0",
+    "jest": "^24.9.0",
+    "jest-canvas-mock": "^2.1.1",
+    "jest-environment-jsdom-fourteen": "^0.1.0"
+  },
+  "scripts": {
+    "start": "parcel index.html",
+    "test": "jest"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties"
+    ]
+  },
+  "author": "Erik Youngren",
+  "license": "MIT"
+}
