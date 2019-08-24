@@ -3,11 +3,16 @@
 /**
  * @jest-environment jsdom
  */
-
 import 'jest-canvas-mock';
 
+/**
+ * Testing
+ */
 import {Player, PlayerMark} from "./player";
 
+/**
+ * Player
+ */
 describe("Player object", () => {
   test("default constructor for player 1", () => {
     var player = Player.X();
@@ -26,31 +31,50 @@ describe("Player object", () => {
   });
 });
 
+/**
+ * PlayerMark
+ */
 describe("PlayerMark object", () => {
+  describe("follows spec", () => {
+    var mark;
+
+    beforeAll(() => {
+      mark = new PlayerMark();
+    });
+
+    test("has Path2D `path` property", () => {
+      expect(mark.path).toBeInstanceOf(Path2D);
+    });
+
+    test("has number `lineWidth` property", () => {
+      expect(mark.lineWidth).toEqual(expect.any(Number));
+    });
+
+    test("has string `lineCap` property", () => {
+      expect(mark.lineCap).toEqual(expect.any(String));
+    });
+
+    test("has string `strokeStyle` property", () => {
+      expect(mark.strokeStyle).toEqual(expect.any(String));
+
+    });
+
+    test("has string `filter` property", () => {
+      expect(mark.filter).toEqual(expect.any(String));
+
+    });
+  });
+
   test("default constructor for X mark", () => {
     var mark = PlayerMark.X();
 
     expect(mark).toBeInstanceOf(PlayerMark);
-    expect(mark.path).toBeInstanceOf(Path2D);
-    expect(mark).toEqual(expect.objectContaining({
-      lineWidth: expect.anything(),
-      lineCap: expect.any(String),
-      strokeStyle: expect.any(String),
-      filter: expect.any(String)
-    }));
   });
 
   test("default constructor for O mark", () => {
     var mark = PlayerMark.O();
 
     expect(mark).toBeInstanceOf(PlayerMark);
-    expect(mark.path).toBeInstanceOf(Path2D);
-    expect(mark).toEqual(expect.objectContaining({
-      lineWidth: expect.anything(),
-      lineCap: expect.any(String),
-      strokeStyle: expect.any(String),
-      filter: expect.any(String)
-    }));
   });
 
   test("customized default constructors", () => {

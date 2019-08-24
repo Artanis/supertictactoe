@@ -32,11 +32,15 @@ export class PlayerMark {
     filter: "",
   }
 
-  constructor(path, options) {
+  constructor(options) {
     var options = Object.assign(PlayerMark.default_options, options);
 
-    this.path = path;
+    if (!options.path instanceof Path2D) {
+      options.path = new Path2D();
+      options.path.rect(10,10, 20, 20);
+    }
 
+    this.path = options.path;
     this.lineWidth = options.lineWidth;
     this.lineCap = options.lineCap;
     this.strokeStyle = options.strokeStyle;
@@ -44,19 +48,23 @@ export class PlayerMark {
   }
 
   static X(options) {
-    var path = new Path2D();
-    path.moveTo(25.5,25.5);
-    path.lineTo(60+25.5,60+25.5);
-    path.moveTo(25.5, 25.5+60);
-    path.lineTo(25.5+60, 25.5);
+    options = Object.assign({}, options);
 
-    return new this(path, options);
+    options.path = new Path2D();
+    options.path.moveTo(25.5,25.5);
+    options.path.lineTo(60+25.5,60+25.5);
+    options.path.moveTo(25.5, 25.5+60);
+    options.path.lineTo(25.5+60, 25.5);
+
+    return new this(options);
   }
 
   static O(options) {
-    var path = new Path2D();
-    path.ellipse(55.5,55.5,30,30,0,0,2*Math.PI);
+    options = Object.assign({}, options);
+
+    options.path = new Path2D();
+    options.path.ellipse(55.5,55.5,30,30,0,0,2*Math.PI);
     
-    return new this(path, options);
+    return new this(options);
   }
 }
