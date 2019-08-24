@@ -36,7 +36,7 @@ export class Gamestate {
       return squares;
     }
 
-    var plays = _filter(this.history, (o) => o.square === last.subsquare);
+    var plays = this.query(last.subsquare);
     if (plays.length > 8) {
       return squares;
     }
@@ -55,11 +55,24 @@ export class Gamestate {
     if(subgame.indexOf(turn.square) < 0) {
       throw new Error(`Incorrect Subgame: Expected play in subgame ${subgame}, got play in ${turn.square}`);
     }
+    
+    var played = this.query(turn.square, turn.subsquare);
+    if(played.length > 0) {
+      throw new Error(`Previously Played: The move (${turn.square}, ${turn.subsquare}) is already taken.`)
+    }
 
     this.history.push(turn);
   }
 
-
+  query(square, subsquare) {
+    return _filter(this.history, (o) => {
+      if(subsquare !== undefined) {
+        return o.square === square && o.subsquare === subsquare
+      } else {
+        return o.square === square
+      }
+    });
+  }
 }
 
 export class Turn {

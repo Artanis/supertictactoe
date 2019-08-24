@@ -101,7 +101,14 @@ describe("`Gamestate` object", () => {
       }).not.toThrow(/incorrect subgame/i);
     });
   
-    test.todo("players can't play in spaces that are already played in");
+    test("players can't take spaces that are already taken", () => {
+      gamestate.move(new Turn(x, 0, 0));
+
+      expect(() => {
+        gamestate.move(new Turn(o, 0, 0));
+      }).toThrow(/previously played/i);
+
+    });
     
     test.todo("detects game wins");
   
