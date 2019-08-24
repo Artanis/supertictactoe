@@ -3,9 +3,12 @@
 import {
   last as _last,
   range as _range,
-  intersection as _intersection} from "lodash";
+  filter as _filter} from "lodash";
 import uuidv4 from "uuid/v4";
 
+/**
+ * Gamestate
+ */
 export class Gamestate {
   id;
   players;
@@ -26,19 +29,24 @@ export class Gamestate {
   }
 
   get activeSubgame() {
-    var last = _last(this.history)
+    var last = _last(this.history);
+    var squares = _range(0, 9)
+    
     if (last === undefined) {
-      return _range(0, 9);
-    } else {
-      return [last.subsquare];
+      return squares;
     }
+
+    var plays = _filter(this.history, (o) => o.square === last.subsquare);
+    if (plays.length > 8) {
+      return squares;
+    }
+
+    return [last.subsquare];
   }
 
   move(turn) {
     var player = this.activePlayer;
     var subgame = this.activeSubgame;
-
-    console.log("Subgame", subgame)
 
     if(player !== turn.player) {
       throw new Error(`Incorrect Player: Expected player ${player.label}, got ${turn.player.label}`)
@@ -50,6 +58,8 @@ export class Gamestate {
 
     this.history.push(turn);
   }
+
+
 }
 
 export class Turn {

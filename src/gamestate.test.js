@@ -75,7 +75,31 @@ describe("`Gamestate` object", () => {
       }).toThrow(/incorrect subgame/i);
     });
   
-    test.todo("players can play in non-active subgames if the active subgame is full");
+    test("players can play in non-active subgames if the active subgame is full", () => {
+      gamestate.move(new Turn(x, 0, 1)); // [.X.......]
+      gamestate.move(new Turn(o, 1, 0));
+      gamestate.move(new Turn(x, 0, 2)); // [.XX......]
+      gamestate.move(new Turn(o, 2, 0));
+      gamestate.move(new Turn(x, 0, 3)); // [.XXX.....]
+      gamestate.move(new Turn(o, 3, 0));
+      gamestate.move(new Turn(x, 0, 4)); // [.XXXX....]
+      gamestate.move(new Turn(o, 4, 0));
+      gamestate.move(new Turn(x, 0, 5)); // [.XXXXX...]
+      gamestate.move(new Turn(o, 5, 0));
+      gamestate.move(new Turn(x, 0, 6)); // [.XXXXXX..]
+      gamestate.move(new Turn(o, 6, 0));
+      gamestate.move(new Turn(x, 0, 7)); // [.XXXXXXX.]
+      gamestate.move(new Turn(o, 7, 0));
+      gamestate.move(new Turn(x, 0, 8)); // [.XXXXXXXX]
+      gamestate.move(new Turn(o, 8, 0));
+      gamestate.move(new Turn(x, 0, 0)); // [XXXXXXXXX]
+
+      // Game now wants a play in subgame 0, which as above is full.
+      // Next player should be able to play anywhere.
+      expect(() => {
+        gamestate.move(new Turn(o, 1, 1));
+      }).not.toThrow(/incorrect subgame/i);
+    });
   
     test.todo("players can't play in spaces that are already played in");
     
