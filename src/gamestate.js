@@ -2,6 +2,16 @@
 
 import uuidv4 from "uuid/v4";
 
+export class Gamestate {
+  id;
+  history;
+
+  constructor() {
+    this.id = uuidv4();
+    this.history = new Array();
+  }
+}
+
 export class Turn {
   id;
   player;
@@ -16,5 +26,7 @@ export class Turn {
 
     this.square = square;
     this.subsquare = subsquare;
+
+    Object.seal(this);
   }
 }
