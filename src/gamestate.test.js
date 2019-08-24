@@ -14,9 +14,10 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 /**
  * Plays a given future onto a `gamestate`, then returns the last `Turn` in
  * `future`.
- * @param {Gamestate} gamestate Game to play the future on to
- * @param {Turn[]} future The future to play
- * @returns {Turn} The last turn in `future`
+ * 
+ * @param {Gamestate} gamestate
+ * @param {Turn[]} future
+ * @returns {Turn}
  */
 function fastForward(gamestate, future) {
   for(var i = 0; i < future.length; i++) {
@@ -98,23 +99,26 @@ describe("`Gamestate` object", () => {
     });
   
     test("players can play in non-active subgames if the active subgame is full", () => {
-      gamestate.move(new Turn(x, 0, 1)); // [.X.......]
-      gamestate.move(new Turn(o, 1, 0));
-      gamestate.move(new Turn(x, 0, 2)); // [.XX......]
-      gamestate.move(new Turn(o, 2, 0));
-      gamestate.move(new Turn(x, 0, 3)); // [.XXX.....]
-      gamestate.move(new Turn(o, 3, 0));
-      gamestate.move(new Turn(x, 0, 4)); // [.XXXX....]
-      gamestate.move(new Turn(o, 4, 0));
-      gamestate.move(new Turn(x, 0, 5)); // [.XXXXX...]
-      gamestate.move(new Turn(o, 5, 0));
-      gamestate.move(new Turn(x, 0, 6)); // [.XXXXXX..]
-      gamestate.move(new Turn(o, 6, 0));
-      gamestate.move(new Turn(x, 0, 7)); // [.XXXXXXX.]
-      gamestate.move(new Turn(o, 7, 0));
-      gamestate.move(new Turn(x, 0, 8)); // [.XXXXXXXX]
-      gamestate.move(new Turn(o, 8, 0));
-      gamestate.move(new Turn(x, 0, 0)); // [XXXXXXXXX]
+      var future = [
+        new Turn(x, 0, 1), // [.X.......]
+        new Turn(o, 1, 0),
+        new Turn(x, 0, 2), // [.XX......]
+        new Turn(o, 2, 0),
+        new Turn(x, 0, 3), // [.XXX.....]
+        new Turn(o, 3, 0),
+        new Turn(x, 0, 4), // [.XXXX....]
+        new Turn(o, 4, 0),
+        new Turn(x, 0, 5), // [.XXXXX...]
+        new Turn(o, 5, 0),
+        new Turn(x, 0, 6), // [.XXXXXX..]
+        new Turn(o, 6, 0),
+        new Turn(x, 0, 7), // [.XXXXXXX.]
+        new Turn(o, 7, 0),
+        new Turn(x, 0, 8), // [.XXXXXXXX]
+        new Turn(o, 8, 0),
+        new Turn(x, 0, 0)]; // [XXXXXXXXX]
+
+      fastForward(gamestate, future);
 
       // Game now wants a play in subgame 0, which as above is full.
       // Next player should be able to play anywhere.
@@ -133,31 +137,33 @@ describe("`Gamestate` object", () => {
     });
     
     test("players can win subgames", () => {
-      gamestate.move(new Turn(x, 0, 0));
-      gamestate.move(new Turn(o, 0, 3));
-      gamestate.move(new Turn(x, 3, 0));
-      gamestate.move(new Turn(o, 0, 4));
-      gamestate.move(new Turn(x, 4, 0));
+      var future = [
+        new Turn(x, 0, 0),
+        new Turn(o, 0, 3),
+        new Turn(x, 3, 0),
+        new Turn(o, 0, 4),
+        new Turn(x, 4, 0),
+        new Turn(o, 0, 5)];
 
-      var turn = new Turn(o, 0, 5);
-      gamestate.move(turn);
+      var last = fastForward(gamestate, future);
 
-      expect(turn.subgameWinning).toEqual([3, 4, 5]);
+      expect(last.subgameWinning).toEqual([3, 4, 5]);
     });
 
     test("subgames can't be won twice", () => {
-      gamestate.move(new Turn(x, 0, 0));
-      gamestate.move(new Turn(o, 0, 3));
-      gamestate.move(new Turn(x, 3, 0));
-      gamestate.move(new Turn(o, 0, 4));
-      gamestate.move(new Turn(x, 4, 0));
-      gamestate.move(new Turn(o, 0, 5));
-      gamestate.move(new Turn(x, 5, 0));
+      var future = [
+        new Turn(x, 0, 0),
+        new Turn(o, 0, 3),
+        new Turn(x, 3, 0),
+        new Turn(o, 0, 4),
+        new Turn(x, 4, 0),
+        new Turn(o, 0, 5),
+        new Turn(x, 5, 0),
+        new Turn(o, 0, 6)];
 
-      var turn = new Turn(o, 0, 6);
-      gamestate.move(turn);
+      var last = fastForward(gamestate, future);
 
-      expect(turn.subgameWinning).toBeUndefined();
+      expect(last.subgameWinning).toBeUndefined();
     });
   
     test("players can win the game", () => {
@@ -180,8 +186,7 @@ describe("`Gamestate` object", () => {
         new Turn(o, 6, 2),
         new Turn(x, 2, 7),
         new Turn(o, 7, 2),
-        new Turn(x, 2, 8),
-      ];
+        new Turn(x, 2, 8)];
 
       var last = fastForward(gamestate, future);
 
@@ -208,8 +213,7 @@ describe("`Gamestate` object", () => {
         new Turn(o, 6, 2),
         new Turn(x, 2, 7),
         new Turn(o, 7, 2),
-        new Turn(x, 2, 8),
-      ];
+        new Turn(x, 2, 8)];
 
       fastForward(gamestate, future);
 
