@@ -54,6 +54,10 @@ describe("`Gamestate` object", () => {
     test("has a `history` property that is an Array", () => {
       expect(gamestate.history).toBeInstanceOf(Array);
     });
+
+    test("has `active` that is Boolean", () => {
+      expect(gamestate.active).toEqual(true);
+    })
   });
 
   test.todo("builds gamestate from history");
@@ -184,9 +188,35 @@ describe("`Gamestate` object", () => {
       expect(last.gameWinning).toEqual([0, 1, 2]);
     });
 
-    test.todo("the game ends when a player wins");
-  
-    test.todo("players can't play if the game is over");
+    test("the game ends when a player wins", () => {
+      var future = [
+        new Turn(x, 0, 0),
+        new Turn(o, 0, 8),
+        new Turn(x, 8, 8),
+        new Turn(o, 8, 0),
+        new Turn(x, 0, 1),
+        new Turn(o, 1, 0),
+        new Turn(x, 0, 2),
+        new Turn(o, 2, 1),
+        new Turn(x, 1, 3),
+        new Turn(o, 3, 1),
+        new Turn(x, 1, 4),
+        new Turn(o, 4, 1),
+        new Turn(x, 1, 5),
+        new Turn(o, 5, 2),
+        new Turn(x, 2, 6),
+        new Turn(o, 6, 2),
+        new Turn(x, 2, 7),
+        new Turn(o, 7, 2),
+        new Turn(x, 2, 8),
+      ];
+
+      fastForward(gamestate, future);
+
+      expect(() => {
+        gamestate.move(new Turn(o, 8, 1));
+      }).toThrow(/game ended/i);
+    });
   });
 });
 

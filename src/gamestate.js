@@ -13,23 +13,44 @@ import uuidv4 from "uuid/v4";
  * 
  */
 export class Gamestate {
+  /**
+   * Semicolon separated string of position triples, each corresponding to a
+   * winning play.
+   * 
+   * @type {String}
+   */
   static WINTESTS = "012;345;678;036;147;258;048;246".split(";");
 
   /**
-   * @type {String} UUIDv4 string
+   * UUID identifier
+   * 
+   * @type {String}
    */
   id;
 
   /**
-   * @type {Object} Players participating in this game.
+   * All the players participating in the game
+   * 
+   * @type {Object}
    */
   players;
 
   /**
-   * The canonical representation of the gamestate.
-   * @type {Turn[]} List of turns taken in the game.
+   * List of turns taken in the game.
+   * 
+   * This is the canonical representation of the gamestate. All other possible
+   * views are transformations of this history.
+   * 
+   * @type {Turn[]}
    */
   history;
+
+  /**
+   * `true` if the game is active and playable, `false` if the game has ended.
+   * 
+   * @type {Bool}
+   */
+  active;
 
   /**
    * @typedef {Object} Gamestate
@@ -39,6 +60,7 @@ export class Gamestate {
   constructor(player1, player2) {
     this.id = uuidv4();
     this.history = new Array();
+    this.active = true;
     this.players = {
       X: player1,
       O: player2
@@ -93,13 +115,17 @@ export class Gamestate {
     var subgamewinnable;
     var subgamewins;
     var gamewin;
+    
+    if (!this.active) {
+      throw new Error("Game Ended: Further play not permitted.")
+    }
 
     if(player !== turn.player) {
-      throw new Error(`Incorrect Player: Expected player ${player.label}, got ${turn.player.label}`);
+      throw new Error(`Incorrect Player: Expected player ${player.label}, got ${turn.player.label}.`);
     }
 
     if(subgame.indexOf(turn.square) < 0) {
-      throw new Error(`Incorrect Subgame: Expected play in one of subgame ${subgame}, got play in ${turn.square}`);
+      throw new Error(`Incorrect Subgame: Expected play in one of subgame ${subgame}, got play in ${turn.square}.`);
     }
     
     var played = _filter(this.history, {square: turn.square, subsquare: turn.subsquare});
@@ -118,8 +144,9 @@ export class Gamestate {
     }
 
     gamewin = this.gameWin(turn);
-    if (gamewin) {
+    if (subgamewins && gamewin) {
       turn.gameWinning = gamewin;
+      this.active = false;
     }
 
     this.history.push(turn);
@@ -260,6 +287,11 @@ export class Turn {
   }
 
   toString() {
-    return `<Turn(id="${this.id}", p="${this.player.label}", s=${this.square}, ss=${this.subsquare}, swin=${this.subgameWinning}, gwin=${this.gameWinning})>`;
+    return `<Turn(id="${this.id}", ` +
+                 `p="${this.player.label}", ` +
+                 `s=${this.square}, ` +
+                 `ss=${this.subsquare}, ` +
+                 `swin=${this.subgameWinning}, ` +
+                 `gwin=${this.gameWinning})>`;
   }
 }
