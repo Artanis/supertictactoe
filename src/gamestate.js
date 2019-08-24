@@ -71,7 +71,7 @@ export class Gamestate {
       return squares;
     }
 
-    var plays = this.query(last.subsquare);
+    var plays = _filter(this.history, {square: last.subsquare});
     if (plays.length > 8) {
       return squares;
     }
@@ -99,7 +99,7 @@ export class Gamestate {
       throw new Error(`Incorrect Subgame: Expected play in one of subgame ${subgame}, got play in ${turn.square}`);
     }
     
-    var played = this.query(turn.square, turn.subsquare);
+    var played = _filter(this.history, {square: turn.square, subsquare: turn.subsquare});
     if(played.length > 0) {
       throw new Error(`Previously Played: The move (${turn.square}, ${turn.subsquare}) is already taken.`);
     }
@@ -113,32 +113,12 @@ export class Gamestate {
   }
 
   /**
-   * Returns an array containing:
-   * - Up to 9 Turns if only `square` is given, all the moves made in that
-   *   subgame.
-   * - Up to 1 Turn if both `square` and `subsquare` are given, as this
-   *   identifies a unique move.
-   * @param {Number} square
-   * @param {Number} [subsquare]
-   * @return {Turn[]} All Turns that match the given data
-   */
-  query(square, subsquare) {
-    return _filter(this.history, (o) => {
-      if(subsquare !== undefined) {
-        return o.square === square && o.subsquare === subsquare;
-      } else {
-        return o.square === square;
-      }
-    });
-  }
-
-  /**
    * 
    * @param {Turn} turn
    * @return {Number[3]|Bool}
    */
   isSubgameWinning(turn) {
-    var subgame = this.query(turn.square);
+    var subgame = _filter(this.history, {square: turn.square});
     subgame.push(turn);
 
     var plays = {};

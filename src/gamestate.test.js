@@ -113,7 +113,7 @@ describe("`Gamestate` object", () => {
 
     });
     
-    test.only("players can win subgames", () => {
+    test("players can win subgames", () => {
       gamestate.move(new Turn(x, 0, 0));
       gamestate.move(new Turn(o, 0, 3));
       gamestate.move(new Turn(x, 3, 0));
