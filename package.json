@@ -4,6 +4,7 @@
   "description": "A simple web RTC game of Super Tic-Tac-Toe.",
   "main": "supertictactoe",
   "dependencies": {
+    "canvas": "^2.6.0",
     "concretejs": "^3.0.5",
     "lodash-es": "^4.17.15",
     "round": "^2.0.1",
