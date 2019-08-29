@@ -33,7 +33,7 @@ export class PlayerMark {
   }
 
   constructor(options) {
-    var options = Object.assign(PlayerMark.default_options, options);
+    var options = Object.assign({}, PlayerMark.default_options, options);
 
     if (!options.path instanceof Path2D) {
       options.path = new Path2D();
