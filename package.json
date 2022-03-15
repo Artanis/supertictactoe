@@ -5,7 +5,7 @@
   "main": "supertictactoe",
   "dependencies": {
     "concretejs": "^3.0.5",
-    "lodash-es": "^4.17.15",
+    "lodash-es": "^4.17.21",
     "round": "^2.0.1",
     "uuid": "^3.3.2"
   },
